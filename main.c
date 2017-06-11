@@ -416,10 +416,10 @@ int mizajou (ALLEGRO_EVENT *event) {
                     Deplase(ansyen_kaz->endis,nouvo_kaz->endis);
 
                 }
-                else if(kazlabloke(nouvo_kaz->endis)){
+                else if(nouvo_kaz->pyon->koule!=ansyen_kaz->pyon->koule&&kazlabloke(nouvo_kaz->endis)){
                     Deplase(ansyen_kaz->endis,nouvo_kaz->endis);
                 }
-                else if(arithmetik(nouvo_kaz->endis,ansyen_kaz->endis)){
+                else if(nouvo_kaz->pyon->koule!=ansyen_kaz->pyon->koule &&arithmetik(nouvo_kaz->endis,ansyen_kaz->endis)){
                     Deplase(ansyen_kaz->endis,nouvo_kaz->endis);
                 }
 
@@ -649,100 +649,118 @@ int cheke_oprasyon(int nimewoSibLa,int nimewoAtakan, int nimewoKolon){
 }
 
 int arithmetik(vekte sibLa,vekte atakan)
-{
+{   printf("nap verifye arimetik la\n");
     vekte pozisyon;
     float ang=0;
-    int cheke=0, direksyon=0, distans, fom, fomAtakan,fomSibLa;
-    fomSibLa=fom=tablo[sibLa.x ][sibLa.y].pyon->fom;
+    int cheke=0, direksyon=0, longe, distans, fom, fomAtakan,fomSibLa;
+    fom=tablo[sibLa.x ][sibLa.y].pyon->fom;
     fomAtakan=tablo[atakan.x ][atakan.y].pyon->fom;
     distans=(fom==0)?3:((fom==1)?2:1);
 
-   /* if(tablo[sibLa.x][sibLa.y].pyon->fom!=tablo[atakan ][atakan].pyon->fom
-       &&tablo[sibLa.x][sibLa.y].pyon->nimewo==tablo[atakan ][atakan].pyon->nimewo)
+    if(tablo[sibLa.x][sibLa.y].pyon->fom!=tablo[atakan.x][atakan.y].pyon->fom
+       &&tablo[sibLa.x][sibLa.y].pyon->nimewo==tablo[atakan.x][atakan.y].pyon->nimewo)
         return 1;
 
         do{
+                for(longe=0;longe<distans;longe++){
+                    pozisyon.y=(int)floor(cos(ang)+0.5);
+                    pozisyon.x=(int)-floor(sin(ang)+0.5);
+                    pozisyon.y=(pozisyon.y>0)?pozisyon.y+longe:((pozisyon.y<0)?pozisyon.y-longe:pozisyon.y);
+                    pozisyon.x=(pozisyon.x>0)?pozisyon.x+longe:((pozisyon.x<0)?pozisyon.x-longe:pozisyon.x);
 
-                pozisyon.y=(int)floor(cos(ang)+0.5);
-                pozisyon.x=(int)-floor(sin(ang)+0.5);
-                pozisyon.y=(pozisyon.y>0)?pozisyon.y+distans:((pozisyon.y<0)?pozisyon.y-distans:pozisyon.y);
-                pozisyon.x=(pozisyon.x>0)?pozisyon.x+distans:((pozisyon.x<0)?pozisyon.x-distans:pozisyon.x);
+                    if((sibLa.x+pozisyon.x<0 ||sibLa.x+pozisyon.x>7)||(sibLa.y+pozisyon.y<0||sibLa.y+pozisyon.y>15))
+                        continue;
 
-                if((sibLa.x+pozisyon.x<0 ||sibLa.x+pozisyon.x>7)||(sibLa.y+pozisyon.y<0||sibLa.y+pozisyon.y>15))
-                    continue;
+                    switch(fom){
+                        //1-swithc fom nan 0 kare 1 triyang 2 pyramid 3 won
+                            //2-apre gade si li nan yon direksion orizontal(pe) [if...] oubyen dyagonal (enpe) [else...]
+                                //3- si gen yon pyon nan pozisyon an  [if...]
+                                        //4-verifie li gen yon koule ki diferan de sib la epi verifye li se yon fom ki nan bon distans(bon -longe) deplasman an epi [if ... && ...
+                                            //5-cheche aritmetik lan sil bon [if cheke_op..]
+                                                //si wi cheke pran vale 1
+                                                //sinon li change direksyon pou eseye avek lot pyes
+                                                //si li jwen youn li pa eseye anko li fini
 
-                switch(fom){
-                    case 0: if(direksyon==0||direksyon==2||direksyon==4||direksyon==6){
-                                if(tablo[sibLa.x+pozisyon.x ][sibLa.y+pozisyon.y].pyon){
-                                    if(cheke_oprasyon(tablo[sibLa.x][sibLa.y].pyon->nimewo,tablo[atakan.x][atakan.y].pyon->nimewo,tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->nimewo)&&
-                                       (tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->fom==0||tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->fom==1))
-                                      cheke=1;
+
+                        case 0: if(direksyon==0||direksyon==2||direksyon==4||direksyon==6){
+                                    if(tablo[sibLa.x+pozisyon.x ][sibLa.y+pozisyon.y].pyon){
+                                        if(tablo[sibLa.x][sibLa.y].pyon->koule!=tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->koule&&
+                                           ((tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->fom==0 && longe==2)||(tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->fom==1 && longe==1)))
+                                            if(cheke_oprasyon(tablo[sibLa.x][sibLa.y].pyon->nimewo,tablo[atakan.x][atakan.y].pyon->nimewo,tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->nimewo))
+                                                cheke=1;
+                                    }
                                 }
-                            }
-                            else{
-                                if(tablo[sibLa.x+pozisyon.x ][sibLa.y+pozisyon.y].pyon){
-                                    if(cheke_oprasyon(tablo[sibLa.x][sibLa.y].pyon->nimewo,tablo[atakan.x][atakan.y].pyon->nimewo,tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->nimewo)&&
-                                       (tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->fom==2||tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->fom==3))
-                                      cheke=1;
+                                else{
+                                    if(tablo[sibLa.x+pozisyon.x ][sibLa.y+pozisyon.y].pyon){
+                                        if(tablo[sibLa.x][sibLa.y].pyon->koule!=tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->koule&&
+                                           ((tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->fom==2 && longe==2)||(tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->fom==3 && longe==0)))
+                                            if(cheke_oprasyon(tablo[sibLa.x][sibLa.y].pyon->nimewo,tablo[atakan.x][atakan.y].pyon->nimewo,tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->nimewo))
+                                                cheke=1;
+                                    }
                                 }
-                            }
 
-                        break;
+                            break;
 
-                    case 1: if(direksyon==0||direksyon==2||direksyon==4||direksyon==6 ){
-                                if(tablo[sibLa.x+pozisyon.x ][sibLa.y+pozisyon.y].pyon){
-                                    if(cheke_oprasyon(tablo[sibLa.x][sibLa.y].pyon->nimewo,tablo[atakan.x][atakan.y].pyon->nimewo,tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->nimewo)&&
-                                       (tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->fom==0||tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->fom==1))
-                                      cheke=1;
+                        case 1: if(direksyon==0||direksyon==2||direksyon==4||direksyon==6){
+                                    if(tablo[sibLa.x+pozisyon.x ][sibLa.y+pozisyon.y].pyon){
+                                        if(tablo[sibLa.x][sibLa.y].pyon->koule!=tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->koule&&
+                                           ((tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->fom==0 && longe==2)||(tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->fom==1 && longe==1)))
+                                            if(cheke_oprasyon(tablo[sibLa.x][sibLa.y].pyon->nimewo,tablo[atakan.x][atakan.y].pyon->nimewo,tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->nimewo))
+                                                cheke=1;
+                                    }
                                 }
-                            }
-                            else{
-                                if(tablo[sibLa.x+pozisyon.x ][sibLa.y+pozisyon.y].pyon){
-                                    if(cheke_oprasyon(tablo[sibLa.x][sibLa.y].pyon->nimewo,tablo[atakan.x][atakan.y].pyon->nimewo,tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->nimewo)&&
-                                       (tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->fom==2||tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->fom==3))
-                                      cheke=1;
+                                else{
+                                    if(tablo[sibLa.x+pozisyon.x ][sibLa.y+pozisyon.y].pyon){
+                                        if(tablo[sibLa.x][sibLa.y].pyon->koule!=tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->koule&&
+                                           ((tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->fom==2 && longe==2)||(tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->fom==3 && longe==0)))
+                                            if(cheke_oprasyon(tablo[sibLa.x][sibLa.y].pyon->nimewo,tablo[atakan.x][atakan.y].pyon->nimewo,tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->nimewo))
+                                                cheke=1;
+                                    }
                                 }
-                            }
 
-                        break;
+                            break;
 
-                    case 2: if(direksyon==0||direksyon==2||direksyon==4||direksyon==6 ){
-                                if(tablo[sibLa.x+pozisyon.x ][sibLa.y+pozisyon.y].pyon){
-                                    if(cheke_oprasyon(tablo[sibLa.x][sibLa.y].pyon->nimewo,tablo[atakan.x][atakan.y].pyon->nimewo,tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->nimewo)&&
-                                       (tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->fom==0||tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->fom==1))
-                                      cheke=1;
+                        case 2: if(direksyon==0||direksyon==2||direksyon==4||direksyon==6){
+                                    if(tablo[sibLa.x+pozisyon.x ][sibLa.y+pozisyon.y].pyon){
+                                        if(tablo[sibLa.x][sibLa.y].pyon->koule!=tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->koule&&
+                                           ((tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->fom==0 && longe==2)||(tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->fom==1 && longe==1)))
+                                            if(cheke_oprasyon(tablo[sibLa.x][sibLa.y].pyon->nimewo,tablo[atakan.x][atakan.y].pyon->nimewo,tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->nimewo))
+                                                cheke=1;
+                                    }
                                 }
-                            }
-                            else{
-                                if(tablo[sibLa.x+pozisyon.x ][sibLa.y+pozisyon.y].pyon){
-                                    if(cheke_oprasyon(tablo[sibLa.x][sibLa.y].pyon->nimewo,tablo[atakan.x][atakan.y].pyon->nimewo,tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->nimewo)&&
-                                       (tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->fom==2||tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->fom==3))
-                                      cheke=1;
+                                else{
+                                    if(tablo[sibLa.x+pozisyon.x ][sibLa.y+pozisyon.y].pyon){
+                                        if(tablo[sibLa.x][sibLa.y].pyon->koule!=tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->koule&&
+                                           ((tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->fom==2 && longe==2)||(tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->fom==3 && longe==0)))
+                                            if(cheke_oprasyon(tablo[sibLa.x][sibLa.y].pyon->nimewo,tablo[atakan.x][atakan.y].pyon->nimewo,tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->nimewo))
+                                                cheke=1;
+                                    }
                                 }
-                            }
 
-                        break;
+                            break;
 
-                    case 3: if(direksyon==0||direksyon==2||direksyon==4||direksyon==6 ){
-                                if(tablo[sibLa.x+pozisyon.x ][sibLa.y+pozisyon.y].pyon){
-                                    if(cheke_oprasyon(tablo[sibLa.x][sibLa.y].pyon->nimewo,tablo[atakan.x][atakan.y].pyon->nimewo,tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->nimewo))
-                                      cheke=1;
+                        case 3: if(direksyon==0||direksyon==2||direksyon==4||direksyon==6){
+                                    if(tablo[sibLa.x+pozisyon.x ][sibLa.y+pozisyon.y].pyon){
+                                        if(tablo[sibLa.x][sibLa.y].pyon->koule!=tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->koule&&
+                                           ((tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->fom==0 && longe==2)||(tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->fom==1 && longe==1)))
+                                            if(cheke_oprasyon(tablo[sibLa.x][sibLa.y].pyon->nimewo,tablo[atakan.x][atakan.y].pyon->nimewo,tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->nimewo))
+                                                cheke=1;
+                                    }
                                 }
-                            }
-                            else{
-                                if(tablo[sibLa.x+pozisyon.x ][sibLa.y+pozisyon.y].pyon){
-                                    if(cheke_oprasyon(tablo[sibLa.x][sibLa.y].pyon->nimewo,tablo[atakan.x][atakan.y].pyon->nimewo,tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->nimewo)&&
-                                       (tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->fom==2||tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->fom==3))
-                                      cheke=1;
+                                else{
+                                    if(tablo[sibLa.x+pozisyon.x ][sibLa.y+pozisyon.y].pyon){
+                                        if(tablo[sibLa.x][sibLa.y].pyon->koule!=tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->koule&&
+                                           ((tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->fom==2 && longe==0)||(tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->fom==3 && longe==0)))
+                                            if(cheke_oprasyon(tablo[sibLa.x][sibLa.y].pyon->nimewo,tablo[atakan.x][atakan.y].pyon->nimewo,tablo[sibLa.x+pozisyon.x][sibLa.y+pozisyon.y].pyon->nimewo))
+                                                cheke=1;
+                                    }
                                 }
-                            }
 
-                        break;
+                            break;
+                }
             }
-
             direksyon++;    ang=ang+_PI/4.0;
-        }while(ireksyon<8&&!cheke)
-    */
+        }while(direksyon<8&&!cheke);
         if(cheke)
             printf("ou AAA\n");
         else
